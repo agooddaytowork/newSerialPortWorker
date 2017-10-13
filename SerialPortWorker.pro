@@ -4,10 +4,10 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui serialport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
+CONFIG += -std=c++11 console
 TARGET = SerialPortWorker
 TEMPLATE = app
 
@@ -25,10 +25,32 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
         main.cpp \
-        mainwindow.cpp
+        mainwindow.cpp \
+        anLogger/src/anlogger.cpp \
+        BinaryProtocol/src/binaryprotocol.cpp \
+        WindowProtocol/src/windowprotocol.cpp \
+        shared/abstractstatemachinebasis.cpp \
+        shared/commonthings.cpp \
+        shared/directtransition.cpp \
+        src/serialportworker.cpp \
+    src/serialportworkerbasis.cpp \
+    src/uninitiatedserialportworker.cpp \
+    src/idleserialportworker.cpp \
+    src/runningserialportworker.cpp
 
 HEADERS += \
-        mainwindow.h
+        mainwindow.h \
+        anLogger/src/anlogger.h \
+        BinaryProtocol/src/binaryprotocol.h \
+        WindowProtocol/src/windowprotocol.h \
+        shared/abstractstatemachinebasis.h \
+        shared/commonthings.h \
+        shared/directtransition.h \
+        src/serialportworker.h \
+    src/serialportworkerbasis.h \
+    src/uninitiatedserialportworker.h \
+    src/idleserialportworker.h \
+    src/runningserialportworker.h
 
 FORMS += \
         mainwindow.ui
