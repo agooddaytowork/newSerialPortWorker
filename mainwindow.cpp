@@ -7,6 +7,9 @@ MainWindow::MainWindow(QWidget *parent) :
 {
     ui->setupUi(this);
 
+    uhv2pump0.SetBPNo(0);
+    uvh4pump0.setWPNo(0);
+
     QThread *aNewThread = new QThread();
     SerialPortWorker *aSerialPortWorker = new SerialPortWorker();
     aSerialPortWorker->setObjectName(UHV2WorkerObjName);
@@ -43,10 +46,12 @@ void MainWindow::on_pushButton_UHVType_clicked()
 {
     if (ui->pushButton_UHVType->text() == QStringLiteral("UHV2"))
     {
+        isUHV2 = false;
         ui->pushButton_UHVType->setText(QStringLiteral("UHV4"));
     }
     else
     {
+        isUHV2 = true;
         ui->pushButton_UHVType->setText(QStringLiteral("UHV2"));
     }
 }
@@ -78,7 +83,21 @@ void MainWindow::updateREADlabel(const QString &READstyleSheet, const QString &R
 
 void MainWindow::on_pushButtonHVonoff_clicked()
 {
-
+    GlobalSignal hvOnMsg;
+    hvOnMsg.Type = QVariant::fromValue(SerialPortWorkerBasis::requestBytesTransmission);
+    hvOnMsg.Priority = ui->spinBoxHVonoff->value();
+    if (ui->pushButtonHVonoff->text() == "HV ON")
+    {
+        hvOnMsg.Data = QVariant::fromValue(uhv2pump0.HdrCmd().HVSwitch().Ch1().On().GenMsg());
+    }
+    else if (ui->pushButtonHVonoff->text() == "HV OFF")
+    {
+        hvOnMsg.Data = QVariant::fromValue(uhv2pump0.HdrCmd().HVSwitch().Ch1().Off().GenMsg());
+    }
+    for (quint8 index=0; index<=ui->spinBoxHVonoff_2->value(); ++index)
+    {
+        emit Out(hvOnMsg);
+    }
 }
 
 void MainWindow::on_pushButtonReadV_clicked()
@@ -94,4 +113,25 @@ void MainWindow::on_pushButtonReadI_clicked()
 void MainWindow::on_pushButtonReadP_clicked()
 {
 
+}
+
+void MainWindow::on_pushButtonClearBuffer_clicked()
+{
+
+}
+
+void MainWindow::on_pushButtonConnect_clicked()
+{
+    GlobalSignal givePortName;
+    givePortName.Type = QVariant::fromValue(SerialPortWorkerBasis::replyPortName);
+    if (ui->pushButtonConnect->text() == QStringLiteral("Connect"))
+    {
+        givePortName.Data = QVariant::fromValue(ui->comboBoxSerialPort->currentText());
+    }
+    else if (ui->pushButtonConnect->text() == QStringLiteral("Disconnect"))
+    {
+        givePortName.Data = QVariant::fromValue(QStringLiteral());
+    }
+    ui->pushButtonConnect->setText("Plz Wait ...");
+    emit Out(givePortName);
 }

@@ -32,10 +32,15 @@ private slots:
 
     void on_pushButtonReadP_clicked();
 
+    void on_pushButtonClearBuffer_clicked();
+
+    void on_pushButtonConnect_clicked();
+
 private:
     Ui::MainWindow *ui;
+    bool isUHV2 = true;
     BinaryProtocol uhv2pump0;
-    WindowProtocol uvh4pum0;
+    WindowProtocol uvh4pump0;
     void updateSENDlabel(const QString &SENDstyleSheet = "",
                          const QString &SentMsgStr = "",
                          const QString &SentMessageStr = "");
