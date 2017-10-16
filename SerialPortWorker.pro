@@ -36,7 +36,9 @@ SOURCES += \
     src/serialportworkerbasis.cpp \
     src/uninitiatedserialportworker.cpp \
     src/idleserialportworker.cpp \
-    src/runningserialportworker.cpp
+    src/runningserialportworker.cpp \
+    src/readbytesserialportworker.cpp \
+    src/errorserialportworker.cpp
 
 HEADERS += \
         mainwindow.h \
@@ -50,7 +52,9 @@ HEADERS += \
     src/serialportworkerbasis.h \
     src/uninitiatedserialportworker.h \
     src/idleserialportworker.h \
-    src/runningserialportworker.h
+    src/runningserialportworker.h \
+    src/readbytesserialportworker.h \
+    src/errorserialportworker.h
 
 FORMS += \
         mainwindow.ui

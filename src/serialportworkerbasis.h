@@ -17,12 +17,9 @@ public:
     enum Data
     {
         NoData = 0,
-        setPortName,
         requestPortName,
         replyPortName,
         clearBuffer,
-        disconnectSerialPort,
-        restartSerialPort,
         requestBytesTransmission,
         replyBytesWithTimeStamp
     };
@@ -64,13 +61,26 @@ public:
     Error ErrorType = NoError;
     QString ErrorInfo;
 
+    //Cache
+    GlobalSignal currentGlobalSignal;
+
     void initialize();
     void dispose();
-
+    void setError(const Error & anErrorType, const QString & anErrorInfo);
+    void clearError();
+    void setPortName(const QString &newPortName);
+    void executePrioritizedBuffer();
+    void emitErrorGlobalSignal();
 signals:
     void PortNameChanged();
 public slots:
     void In(const GlobalSignal &aGlobalSignal);
+    void SerialPortErrorOccurred(QSerialPort::SerialPortError error);
+private:
+    void configSerialPort();
+    bool openSerialPort();
+    void closeSerialPort();
+    void clearCache();    
 };
 
 #endif // SERIALPORTWORKERBASIS_H
