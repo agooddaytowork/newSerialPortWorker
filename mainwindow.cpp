@@ -227,12 +227,21 @@ void MainWindow::In(const GlobalSignal &aGlobalSignal)
         case SerialPortWorkerBasis::BytesWritten:
         {
             QByteArray coreRepMsg = aGlobalSignal.Data.toByteArray();
-            BinaryProtocol & tmpUHV2 = BinaryProtocol::fromQByteArray(coreRepMsg);
-            if (tmpUHV2.GetMessageDirection() == "To")
+            if (isUHV2)
             {
-                anInfo("Sent: " << tmpUHV2.GetMessageTranslation());
+                BinaryProtocol & tmpUHV2 = BinaryProtocol::fromQByteArray(coreRepMsg);
+                if (tmpUHV2.GetMessageDirection() == "To")
+                {
+                    anInfo("Sent: " << tmpUHV2.GetMessageTranslation());
+                    updateREADlabel("",ui->labelReadMsg->text(),ui->labelReadMessage->text());
+                    updateSENDlabel("QLabel { background-color : green; color : yellow; }",tmpUHV2.GetMsg().toHex(),tmpUHV2.GetMessageTranslation());
+                }
+            }
+            else
+            {
+                WindowProtocol & tmpUHV = WindowProtocol::fromQByteArray(coreRepMsg);
                 updateREADlabel("",ui->labelReadMsg->text(),ui->labelReadMessage->text());
-                updateSENDlabel("QLabel { background-color : green; color : yellow; }",tmpUHV2.GetMsg().toHex(),tmpUHV2.GetMessageTranslation());
+                updateSENDlabel("QLabel { background-color : green; color : yellow; }",tmpUHV.getMSG().toHex(),tmpUHV.getMSGMean());
             }
             break;
         }
@@ -347,5 +356,6 @@ void MainWindow::on_pushButtonConnect_clicked()
 
 void MainWindow::on_pushButton_QUIT_clicked()
 {
+    emit killSerialPortThread();
     qApp->quit();
 }
