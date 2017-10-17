@@ -61,19 +61,18 @@ public:
     Error ErrorType = NoError;
     QString ErrorInfo;
 
-    //Cache
-    GlobalSignal currentGlobalSignal;
-    bool isOneRunningCycleCompleted = false;
-
     void initialize(const QString &aPortName);
     void dispose();
     void setError(const Error & anErrorType, const QString & anErrorInfo);
     void clearError();
     void setPortName(const QString &newPortName);
+    void emitRequestPortName();
+    void queueNotificationReadyToWork();
     void executePrioritizedBuffer();
+    void readAllDataFromSerialPort();
     void emitErrorGlobalSignal();
 signals:
-    void PortNameChanged();
+    void readingBytesSerialPortWorker();
 public slots:
     void In(const GlobalSignal &aGlobalSignal);
     void SerialPortErrorOccurred(QSerialPort::SerialPortError error);

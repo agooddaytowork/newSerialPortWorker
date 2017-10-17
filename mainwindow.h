@@ -20,10 +20,9 @@ public:
     ~MainWindow();
 signals:
     void Out(const GlobalSignal &);
+    void killSerialPortThread();
 private slots:
     void In(const GlobalSignal &aGlobalSignal);
-    void on_pushButton_UHVType_clicked();
-
     void on_pushButtonHVonoff_clicked();
 
     void on_pushButtonReadV_clicked();
@@ -40,7 +39,7 @@ private:
     Ui::MainWindow *ui;
     bool isUHV2 = true;
     BinaryProtocol uhv2pump0;
-    WindowProtocol uvh4pump0;
+    WindowProtocol uhv4pump0;
     void updateSENDlabel(const QString &SENDstyleSheet = "",
                          const QString &SentMsgStr = "",
                          const QString &SentMessageStr = "");

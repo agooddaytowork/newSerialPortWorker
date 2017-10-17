@@ -13,26 +13,9 @@ void readBytesSerialPortWorker::onEntry(QEvent *)
     anIf(SerialPortWorkerBasisDbgEn, anTrk("readBytesSerialPortWorker Entered"));
     basisptr->currentStateName = objectName();
     qApp->processEvents();
-    if (basisptr->SerialPort.waitForReadyRead(2700))
-    {
-        QByteArray tmpRead(basisptr->SerialPort.readAll());
-        while (basisptr->SerialPort.waitForReadyRead(300))
-        {
-            tmpRead += basisptr->SerialPort.readAll();
-        }
-        anIf(SerialPortWorkerBasisDbgEn, anAck("Bytes Read !"));
-        basisptr->currentGlobalSignal.Type = QVariant::fromValue(SerialPortWorkerBasis::replyBytesWithTimeStamp);
-        basisptr->currentGlobalSignal.Data = QVariant::fromValue(tmpRead);
-        basisptr->currentGlobalSignal.TimeStamp = NOW2String;
-    }
-    else
-    {
-        anIf(SerialPortWorkerBasisDbgEn, anWarn("Ready Read Timed Out !"));
-        basisptr->currentGlobalSignal.Type = QVariant::fromValue(SerialPortWorkerBasis::ReadyReadTimedOut);
-    }
-    basisptr->addAGlobalSignal(basisptr->currentGlobalSignal);
-    basisptr->isOneRunningCycleCompleted = true;
-    emit basisptr->requestDirectTransition(QStringLiteral("runningSerialPortWorker"));
+    basisptr->readAllDataFromSerialPort();
+    basisptr->isCurrentRunningCycleCompleted = true;
+    emit basisptr->goToState2();
 }
 
 void readBytesSerialPortWorker::onExit(QEvent *)

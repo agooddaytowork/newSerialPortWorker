@@ -14,15 +14,15 @@ void runningSerialPortWorker::onEntry(QEvent *)
     basisptr->currentStateName = objectName();
     qApp->processEvents();
     basisptr->executePrioritizedBuffer();
-    if (basisptr->isOneRunningCycleCompleted)
+    if (basisptr->isCurrentRunningCycleCompleted)
     {
         if (basisptr->prioritizedBuffer.isEmpty())
         {
-            emit basisptr->requestDirectTransition(QStringLiteral("idleSerialPortWorker"));
+            emit basisptr->goToState1();
         }
         else
         {
-            emit basisptr->requestDirectTransition(QStringLiteral("runningSerialPortWorker"));
+            emit basisptr->goToState2();
         }
     }
 }

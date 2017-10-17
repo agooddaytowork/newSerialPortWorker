@@ -15,13 +15,8 @@ void idleSerialPortWorker::onEntry(QEvent *)
     qApp->processEvents();
     if (basisptr->previousStateName == QStringLiteral("uninitiatedSerialPortWorker"))
     {
-        GlobalSignal iamReady;
-        iamReady.Type = QVariant::fromValue(SerialPortWorkerBasis::readyToWork);
-        iamReady.Data = QVariant::fromValue(machine()->objectName());
-        iamReady.TimeStamp = NOW2String;
-        iamReady.DstStrs.append(SmallCoordinatorObjName);
-        iamReady.SignalPriority = 200;
-        basisptr->addAGlobalSignal(iamReady,true);
+        basisptr->queueNotificationReadyToWork();
+        emit basisptr->goToState2();
     }
 }
 

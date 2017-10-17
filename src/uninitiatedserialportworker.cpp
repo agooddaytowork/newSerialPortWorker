@@ -17,11 +17,7 @@ void uninitiatedSerialPortWorker::onEntry(QEvent *)
     {
         if (basisptr->PortName.isEmpty())
         {
-            GlobalSignal requestPortName;
-            requestPortName.Type = QVariant::fromValue(SerialPortWorkerBasis::requestPortName);
-            requestPortName.SignalPriority = 200;
-            requestPortName.DstStrs.append(SmallCoordinatorObjName);
-            emit basisptr->Out(requestPortName);
+           basisptr->emitRequestPortName();
         }
         else
         {

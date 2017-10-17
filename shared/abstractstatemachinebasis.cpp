@@ -5,7 +5,7 @@ AbstractStateMachineBasis::AbstractStateMachineBasis(QObject *parent) : QObject(
 
 }
 
-void AbstractStateMachineBasis::addAGlobalSignal(const GlobalSignal &aGlobalSignal, bool isCommunicative)
+void AbstractStateMachineBasis::addAGlobalSignal(const GlobalSignal &aGlobalSignal)
 {
     if (prioritizedBuffer.contains(aGlobalSignal.Priority))
     {
@@ -16,8 +16,6 @@ void AbstractStateMachineBasis::addAGlobalSignal(const GlobalSignal &aGlobalSign
         prioritizedBuffer.insert(aGlobalSignal.Priority, QList<GlobalSignal>({aGlobalSignal}));
     }
     deleteEmptyListsFromPrioritizedBuffer();
-    if (isCommunicative)
-        emit aGlobalSignalAdded();
 }
 
 void AbstractStateMachineBasis::deleteEmptyListsFromPrioritizedBuffer()
