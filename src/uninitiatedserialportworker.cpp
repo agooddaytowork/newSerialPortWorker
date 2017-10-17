@@ -25,7 +25,8 @@ void uninitiatedSerialPortWorker::onEntry(QEvent *)
         }
         else
         {
-            basisptr->initialize();
+            QString aPortName = basisptr->PortName;
+            basisptr->initialize(aPortName);
         }
     }
 }

@@ -3,6 +3,8 @@
 SerialPortWorkerBasis::SerialPortWorkerBasis(QObject *parent) :
     AbstractStateMachineBasis(parent)
 {
+    registerGlobalSignal;
+    SerialPort.setParent(this);
     QObject::connect(&SerialPort, &QSerialPort::errorOccurred, this, &SerialPortWorkerBasis::SerialPortErrorOccurred);
     QObject::connect(&SerialPort, &QSerialPort::aboutToClose, this, [&](){
         GlobalSignal notifySerialPortDisconnected;
@@ -19,9 +21,10 @@ SerialPortWorkerBasis::~SerialPortWorkerBasis()
     anIf(SerialPortWorkerBasisDbgEn, anWarn("SerialPortWorkerBasis Destroyed"));
 }
 
-void SerialPortWorkerBasis::initialize()
+void SerialPortWorkerBasis::initialize(const QString &aPortName)
 {
     dispose();
+    PortName = aPortName;
     if (openSerialPort())
     {
         isInitiated = true;
@@ -67,7 +70,7 @@ void SerialPortWorkerBasis::setPortName(const QString &newPortName)
 {
     if (newPortName != PortName)
     {
-        anIf(SerialPortWorkerBasisDbgEn, anWarn("Port Name Changed !");anVar(newPortName));        
+        anIf(SerialPortWorkerBasisDbgEn, anWarn("Port Name Changed !");anVar(newPortName));
         dispose();
         PortName = newPortName;
         emit PortNameChanged();
@@ -82,6 +85,7 @@ void SerialPortWorkerBasis::executePrioritizedBuffer()
         currentGlobalSignal = prioritizedBuffer.last().takeFirst();
         deleteEmptyListsFromPrioritizedBuffer();
         QString currentGlobalSignalTypeTypeName = currentGlobalSignal.Type.typeName();
+        anAck("GATE TRACKER: " << currentGlobalSignalTypeTypeName);
         if (currentGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Data"))
         {
             switch (currentGlobalSignal.Type.toInt()) {
@@ -101,6 +105,7 @@ void SerialPortWorkerBasis::executePrioritizedBuffer()
                     currentGlobalSignal.Type = QVariant::fromValue(BytesWrittenTimedOut);
                 }
                 currentGlobalSignal.DstStrs.append(SmallCoordinatorObjName);
+                currentGlobalSignal.Priority = currentGlobalSignal.Priority + 1;
                 addAGlobalSignal(currentGlobalSignal);
                 break;
             }
@@ -125,6 +130,11 @@ void SerialPortWorkerBasis::executePrioritizedBuffer()
             default:
                 break;
             }
+        }
+        else if (currentGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Warning"))
+        {
+            anIf(SerialPortWorkerBasisDbgEn, anAck(WarningMetaEnum.valueToKey(static_cast<int>(currentGlobalSignal.Type.toInt()))));
+            emit Out(currentGlobalSignal);
         }
         else if (currentGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Notification"))
         {
@@ -200,7 +210,8 @@ bool SerialPortWorkerBasis::openSerialPort()
 void SerialPortWorkerBasis::closeSerialPort()
 {
     if (SerialPort.isOpen())
-    {   anIf(SerialPortWorkerBasisDbgEn, anWarn("Close SerialPort"));
+    {
+        anIf(SerialPortWorkerBasisDbgEn, anWarn("Close SerialPort"));
         SerialPort.close();
     }
 }

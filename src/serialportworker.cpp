@@ -24,9 +24,10 @@ SerialPortWorker::SerialPortWorker(QObject *parent) : QStateMachine(parent)
 
     errorSerialPortWorker *state7 = new errorSerialPortWorker(currentBasis);
 
-    main->addTransition(currentBasis, &SerialPortWorkerBasis::ErrorOccurred, state7);
+    state7->addTransition(currentBasis, &SerialPortWorkerBasis::PortNameChanged, state0);
 
-    addTransition(currentBasis, &SerialPortWorkerBasis::PortNameChanged, state0);
+    main->addTransition(currentBasis, &SerialPortWorkerBasis::ErrorOccurred, state7);
+    main->addTransition(currentBasis, &SerialPortWorkerBasis::PortNameChanged, state0);
 
     addState(main);
     addState(state7);

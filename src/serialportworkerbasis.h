@@ -64,7 +64,7 @@ public:
     //Cache
     GlobalSignal currentGlobalSignal;
 
-    void initialize();
+    void initialize(const QString &aPortName);
     void dispose();
     void setError(const Error & anErrorType, const QString & anErrorInfo);
     void clearError();

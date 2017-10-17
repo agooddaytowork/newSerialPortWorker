@@ -38,7 +38,111 @@ MainWindow::~MainWindow()
 
 void MainWindow::In(const GlobalSignal &aGlobalSignal)
 {
-
+    ui->statusBar->clearMessage();
+    QString aGlobalSignalTypeTypeName = aGlobalSignal.Type.typeName();
+    if (aGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Data"))
+    {
+        switch (aGlobalSignal.Type.toInt()) {
+        case SerialPortWorkerBasis::replyBytesWithTimeStamp:
+        {
+            QByteArray coreRepMsg = aGlobalSignal.Data.toByteArray();
+            if (coreRepMsg.size() > 7)
+            {
+                BinaryProtocol & tmpUHV2 = BinaryProtocol::fromQByteArray(coreRepMsg);
+                if (tmpUHV2.GetMessageDirection() == "From")
+                {
+                    anInfo("Read: " << tmpUHV2.GetMessageTranslation());
+                    updateSENDlabel("",ui->labelSentMsg->text(),ui->labelSentMessage->text());
+                    updateREADlabel("QLabel { background-color : green; color : yellow; }",tmpUHV2.GetMsg().toHex(),tmpUHV2.GetMessageTranslation());
+                    if (ui->labelSentMessage->text().contains("Off", Qt::CaseInsensitive)
+                            && ui->labelSentMessage->text().contains("HVSwitch", Qt::CaseInsensitive))
+                        ui->pushButtonHVonoff->setText("HV ON");
+                }
+            }
+            else
+            {
+                anInfo("Read: " << coreRepMsg.toHex());
+                updateSENDlabel("",ui->labelSentMsg->text(),ui->labelSentMessage->text());
+                updateREADlabel("QLabel { background-color : green; color : yellow; }",coreRepMsg.toHex(),"");
+                if ((QString(coreRepMsg.toHex()) == "06") && ui->labelSentMessage->text().contains("HVSwitch", Qt::CaseInsensitive))
+                {
+                    if (ui->labelSentMessage->text().contains("On", Qt::CaseInsensitive))
+                    {
+                        ui->pushButtonHVonoff->setText("HV OFF");
+                    }
+                    else if (ui->labelSentMessage->text().contains("Off", Qt::CaseInsensitive))
+                    {
+                        ui->pushButtonHVonoff->setText("HV ON");
+                    }
+                    ui->labelReadMessage->setText("Acknowledged");
+                }
+            }
+        }
+        default:
+            break;
+        }
+    }
+    else if (aGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Error"))
+    {
+        switch (aGlobalSignal.Type.toInt()) {
+        case SerialPortWorkerBasis::QSerialPortErrorOccurred:
+        {
+            ui->statusBar->showMessage(QStringLiteral("QSerialPortErrorOccurred: ") + aGlobalSignal.Data.toString());
+            anError("QSerialPortErrorOccurred: " << aGlobalSignal.Data.toString());
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    else if (aGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Warning"))
+    {
+        switch (aGlobalSignal.Type.toInt()) {
+        case SerialPortWorkerBasis::ReadyReadTimedOut:
+        {
+            updateSENDlabel("",ui->labelSentMsg->text(),ui->labelSentMessage->text());
+            updateREADlabel("QLabel { background-color : gray; color : red; }","","Timed Out To Read !");
+            break;
+        }
+        case SerialPortWorkerBasis::BytesWrittenTimedOut:
+        {
+            updateSENDlabel("QLabel { background-color : gray; color : red; }","","Timed Out To Send !");
+            updateREADlabel("",ui->labelReadMsg->text(),ui->labelReadMessage->text());
+            break;
+        }
+        default:
+            break;
+        }
+    }
+    else if (aGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Notification"))
+    {
+        switch (aGlobalSignal.Type.toInt()) {
+        case SerialPortWorkerBasis::SerialPortConnected:
+        {
+            ui->pushButtonConnect->setText("Disconnect");
+            break;
+        }
+        case SerialPortWorkerBasis::SerialPortDisconnected:
+        {
+            ui->pushButtonConnect->setText("Connect");
+            break;
+        }
+        case SerialPortWorkerBasis::BytesWritten:
+        {
+            QByteArray coreRepMsg = aGlobalSignal.Data.toByteArray();
+            BinaryProtocol & tmpUHV2 = BinaryProtocol::fromQByteArray(coreRepMsg);
+            if (tmpUHV2.GetMessageDirection() == "To")
+            {
+                anInfo("Sent: " << tmpUHV2.GetMessageTranslation());
+                updateREADlabel("",ui->labelReadMsg->text(),ui->labelReadMessage->text());
+                updateSENDlabel("QLabel { background-color : green; color : yellow; }",tmpUHV2.GetMsg().toHex(),tmpUHV2.GetMessageTranslation());
+            }
+            break;
+        }
+        default:
+            break;
+        }
+    }
 }
 
 
@@ -102,22 +206,46 @@ void MainWindow::on_pushButtonHVonoff_clicked()
 
 void MainWindow::on_pushButtonReadV_clicked()
 {
-
+    GlobalSignal readVstatusMsg;
+    readVstatusMsg.Type = QVariant::fromValue(SerialPortWorkerBasis::requestBytesTransmission);
+    readVstatusMsg.Priority = ui->spinBoxReadV->value();
+    readVstatusMsg.Data = QVariant::fromValue(uhv2pump0.HdrCmd().ReadV().Ch1().GenMsg());
+    for (quint8 index=0; index<=ui->spinBoxReadV_2->value(); ++index)
+    {
+        emit Out(readVstatusMsg);
+    }
 }
 
 void MainWindow::on_pushButtonReadI_clicked()
 {
-
+    GlobalSignal readIstatusMsg;
+    readIstatusMsg.Type = QVariant::fromValue(SerialPortWorkerBasis::requestBytesTransmission);
+    readIstatusMsg.Priority = ui->spinBoxReadI->value();
+    readIstatusMsg.Data = QVariant::fromValue(uhv2pump0.HdrCmd().ReadI().Ch1().GenMsg());
+    for (quint8 index=0; index<=ui->spinBoxReadI_2->value(); ++index)
+    {
+        emit Out(readIstatusMsg);
+    }
 }
 
 void MainWindow::on_pushButtonReadP_clicked()
 {
-
+    GlobalSignal ReadPstatusMsg;
+    ReadPstatusMsg.Type = QVariant::fromValue(SerialPortWorkerBasis::requestBytesTransmission);
+    ReadPstatusMsg.Priority = ui->spinBoxReadP->value();
+    ReadPstatusMsg.Data = QVariant::fromValue(uhv2pump0.HdrCmd().ReadP().Ch1().GenMsg());
+    for (quint8 index=0; index<=ui->spinBoxReadP_2->value(); ++index)
+    {
+        emit Out(ReadPstatusMsg);
+    }
 }
 
 void MainWindow::on_pushButtonClearBuffer_clicked()
 {
-
+    GlobalSignal clearBufferMsg;
+    clearBufferMsg.Type = QVariant::fromValue(SerialPortWorkerBasis::clearBuffer);
+    clearBufferMsg.Priority = 500;
+    emit Out(clearBufferMsg);
 }
 
 void MainWindow::on_pushButtonConnect_clicked()
