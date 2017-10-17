@@ -63,6 +63,7 @@ public:
 
     //Cache
     GlobalSignal currentGlobalSignal;
+    bool isOneRunningCycleCompleted = false;
 
     void initialize(const QString &aPortName);
     void dispose();

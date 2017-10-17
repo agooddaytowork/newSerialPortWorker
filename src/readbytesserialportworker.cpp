@@ -31,6 +31,7 @@ void readBytesSerialPortWorker::onEntry(QEvent *)
         basisptr->currentGlobalSignal.Type = QVariant::fromValue(SerialPortWorkerBasis::ReadyReadTimedOut);
     }
     basisptr->addAGlobalSignal(basisptr->currentGlobalSignal);
+    basisptr->isOneRunningCycleCompleted = true;
     emit basisptr->requestDirectTransition(QStringLiteral("runningSerialPortWorker"));
 }
 

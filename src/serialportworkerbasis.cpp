@@ -93,20 +93,22 @@ void SerialPortWorkerBasis::executePrioritizedBuffer()
             {
                 anIf(SerialPortWorkerBasisDbgEn, anAck("requestBytesTransmission"));
                 SerialPort.write(currentGlobalSignal.Data.toByteArray());
+                currentGlobalSignal.DstStrs.append(SmallCoordinatorObjName);
+                currentGlobalSignal.Priority = currentGlobalSignal.Priority + 1;
                 if (SerialPort.waitForBytesWritten(300))
                 {
                     anIf(SerialPortWorkerBasisDbgEn, anAck("Bytes Written !"));
                     currentGlobalSignal.Type = QVariant::fromValue(BytesWritten);
+                    addAGlobalSignal(currentGlobalSignal);
                     emit requestDirectTransition(QStringLiteral("readBytesSerialPortWorker"));
+                    return;
                 }
                 else
                 {
                     anIf(SerialPortWorkerBasisDbgEn, anWarn("Bytes Written Timed Out !"));
                     currentGlobalSignal.Type = QVariant::fromValue(BytesWrittenTimedOut);
+                    addAGlobalSignal(currentGlobalSignal);
                 }
-                currentGlobalSignal.DstStrs.append(SmallCoordinatorObjName);
-                currentGlobalSignal.Priority = currentGlobalSignal.Priority + 1;
-                addAGlobalSignal(currentGlobalSignal);
                 break;
             }
             case replyBytesWithTimeStamp:
@@ -133,15 +135,16 @@ void SerialPortWorkerBasis::executePrioritizedBuffer()
         }
         else if (currentGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Warning"))
         {
-            anIf(SerialPortWorkerBasisDbgEn, anAck(WarningMetaEnum.valueToKey(static_cast<int>(currentGlobalSignal.Type.toInt()))));
+            anIf(SerialPortWorkerBasisDbgEn,anAck(WarningMetaEnum.valueToKey(static_cast<int>(currentGlobalSignal.Type.toInt()))));
             emit Out(currentGlobalSignal);
         }
         else if (currentGlobalSignalTypeTypeName == QStringLiteral("SerialPortWorkerBasis::Notification"))
         {
-            anIf(SerialPortWorkerBasisDbgEn, anAck(NotificationMetaEnum.valueToKey(static_cast<int>(currentGlobalSignal.Type.toInt()))));
+            anIf(SerialPortWorkerBasisDbgEn,anAck(NotificationMetaEnum.valueToKey(static_cast<int>(currentGlobalSignal.Type.toInt()))));
             emit Out(currentGlobalSignal);
         }
     }
+    isOneRunningCycleCompleted = true;
 }
 
 void SerialPortWorkerBasis::emitErrorGlobalSignal()
@@ -170,7 +173,7 @@ void SerialPortWorkerBasis::In(const GlobalSignal &aGlobalSignal)
     }
     else
     {
-        addAGlobalSignal(aGlobalSignal);
+        addAGlobalSignal(aGlobalSignal,currentStateName == QStringLiteral("idleSerialPortWorker"));
     }
 }
 
@@ -219,6 +222,7 @@ void SerialPortWorkerBasis::closeSerialPort()
 void SerialPortWorkerBasis::clearCache()
 {
     currentGlobalSignal = GlobalSignal();
+    isOneRunningCycleCompleted = false;
 }
 
 const QMetaEnum SerialPortWorkerBasis::DataMetaEnum = QMetaEnum::fromType<SerialPortWorkerBasis::Data>();
