@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>553</width>
-    <height>481</height>
+    <width>613</width>
+    <height>561</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -132,14 +132,14 @@
    <widget class="QLabel" name="label">
     <property name="geometry">
      <rect>
-      <x>290</x>
+      <x>280</x>
       <y>20</y>
-      <width>241</width>
-      <height>21</height>
+      <width>91</width>
+      <height>31</height>
      </rect>
     </property>
     <property name="text">
-     <string>COMMAND               PRIORITY          ECHOES</string>
+     <string>COMMAND</string>
     </property>
    </widget>
    <widget class="QSpinBox" name="spinBoxHVonoff_2">
@@ -185,9 +185,9 @@
    <widget class="QLabel" name="labelSEND">
     <property name="geometry">
      <rect>
-      <x>26</x>
+      <x>16</x>
       <y>282</y>
-      <width>61</width>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
@@ -201,7 +201,7 @@
       <x>100</x>
       <y>280</y>
       <width>491</width>
-      <height>31</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -215,9 +215,9 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>320</y>
+      <y>340</y>
       <width>491</width>
-      <height>31</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -231,9 +231,9 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>410</y>
+      <y>470</y>
       <width>491</width>
-      <height>31</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -246,9 +246,9 @@
    <widget class="QLabel" name="labelREAD">
     <property name="geometry">
      <rect>
-      <x>26</x>
-      <y>372</y>
-      <width>61</width>
+      <x>16</x>
+      <y>412</y>
+      <width>71</width>
       <height>31</height>
      </rect>
     </property>
@@ -260,9 +260,9 @@
     <property name="geometry">
      <rect>
       <x>100</x>
-      <y>370</y>
+      <y>410</y>
       <width>491</width>
-      <height>31</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -315,13 +315,39 @@
     <property name="geometry">
      <rect>
       <x>20</x>
-      <y>422</y>
+      <y>480</y>
       <width>31</width>
       <height>31</height>
      </rect>
     </property>
     <property name="text">
      <string>X</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>380</x>
+      <y>20</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>PRIORITY</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_3">
+    <property name="geometry">
+     <rect>
+      <x>480</x>
+      <y>20</y>
+      <width>91</width>
+      <height>31</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>TIMES</string>
     </property>
    </widget>
   </widget>
