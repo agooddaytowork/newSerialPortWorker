@@ -35,6 +35,8 @@ private slots:
 
     void on_pushButtonConnect_clicked();
 
+    void on_pushButton_QUIT_clicked();
+
 private:
     Ui::MainWindow *ui;
     bool isUHV2 = true;

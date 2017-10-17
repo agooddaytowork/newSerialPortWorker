@@ -344,3 +344,8 @@ void MainWindow::on_pushButtonConnect_clicked()
     ui->pushButtonConnect->setText("Plz Wait ...");
     emit Out(givePortName);
 }
+
+void MainWindow::on_pushButton_QUIT_clicked()
+{
+    qApp->quit();
+}
