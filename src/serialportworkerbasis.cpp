@@ -31,7 +31,7 @@ void SerialPortWorkerBasis::initialize(const QString &aPortName)
         GlobalSignal notifySerialPortConnected;
         notifySerialPortConnected.Type = QVariant::fromValue(SerialPortConnected);
         notifySerialPortConnected.DstStrs.append(SmallCoordinatorObjName);
-        addAGlobalSignal(notifySerialPortConnected);
+        addAGlobalSignal(notifySerialPortConnected,false);
         emit isInitialized();
     }
     anIf(SerialPortWorkerBasisDbgEn && isInitiated, anAck("SerialPortWorkerBasis Initialized"));

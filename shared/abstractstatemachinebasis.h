@@ -24,14 +24,13 @@ public:
     QString previousStateName;
     bool isInitiated = false;
 
-    void addAGlobalSignal(const GlobalSignal &aGlobalSignal);
+    void addAGlobalSignal(const GlobalSignal &aGlobalSignal, bool isCommunicative = true);
     void deleteEmptyListsFromPrioritizedBuffer();
     void clearPrioritizedBuffer();
 signals:
     void Out(const GlobalSignal &);
     void isInitialized();
     void requestDirectTransition(const QString &);
-    void prioritizedBufferRefilled();
     void aGlobalSignalAdded();
     void ErrorOccurred();
 };
