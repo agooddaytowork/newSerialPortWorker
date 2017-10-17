@@ -24,7 +24,7 @@ public:
     QString previousStateName;
     bool isInitiated = false;
 
-    void addAGlobalSignal(const GlobalSignal &aGlobalSignal, bool isCommunicative = true);
+    void addAGlobalSignal(const GlobalSignal &aGlobalSignal, bool isCommunicative = false);
     void deleteEmptyListsFromPrioritizedBuffer();
     void clearPrioritizedBuffer();
 signals:

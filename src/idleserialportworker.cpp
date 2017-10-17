@@ -21,7 +21,7 @@ void idleSerialPortWorker::onEntry(QEvent *)
         iamReady.TimeStamp = NOW2String;
         iamReady.DstStrs.append(SmallCoordinatorObjName);
         iamReady.SignalPriority = 200;
-        basisptr->addAGlobalSignal(iamReady);
+        basisptr->addAGlobalSignal(iamReady,true);
     }
 }
 
